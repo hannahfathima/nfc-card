@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Moderustic:wght@300..800&display=swap');
+*{
+    padding: 0;
+    margin: 0;
+    font-family: "Cabin", sans-serif;
+
+}
+::-webkit-scrollbar{
+    display: none;
+}
+.container{
+    width: 550px;
+    /* height: 1000px; */
+    /* background-color: rgb(0, 0, 0); */
+    margin: auto;
+    box-shadow: 4px 1px 5px 0px rgba(0, 0, 0, 0.468);
+}
+.head-banner{
+    /* background-image: url('./image/dynamic-golden-particle-flowing-dust-background.jpg'); */
+    width: 100%;
+    height: 300px;
+    background-size: cover;
+    /* border-bottom: 4px solid #d4af37; */
+    position: relative;
+}
+.head-banner .profile-pic{
+    width: 210px;
+    height: 210px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: absolute;
+    border: 4px solid #d4af37;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+.profile-pic img{
+    width: 100%;
+}
+.name-section h2{
+    color: white;
+    padding-top: 7rem;
+    text-align: center;
+    font-size: 40px;
+    letter-spacing: 1.3px;
+    font-weight: 500;
+}
+.name-section .position{
+    text-align: center;
+    color: rgb(131, 131, 131);
+    font-size: 20px;
+    margin-top: 1rem;
+    font-weight: 500;
+}
+.name-section .title{
+    text-align: center;
+    color: rgb(131, 131, 131);
+    font-size: 30px;
+    font-weight: 500;
+}
+.social-icons{
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding-top: 2rem;
+}
+.icon{
+    width: 50px;
+    height: 50px;
+    background-color: #d4af37;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.icon .fa{
+    font-size: 28px;
+}
+.buttons-wrapper{
+    padding-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+}
+.button-item{
+    display: flex;
+    gap: 1rem;
+    width: 230px;
+    background-color: #d4af37;
+    border-radius: 100px;
+    height: 50px;
+    align-items: center;
+    justify-content: center;
+}
+.button-item .fa{
+    font-size: 22px;
+}
+.button-item span{
+    font-size: 20px;
+}
+.about{
+    padding: 1rem;
+}
+.about h3{
+    color: white;
+    font-weight: 500;
+    font-size: 25px;
+}
+.about p{
+    margin-top: 10px;
+    color: rgb(131, 131, 131);
+    font-size: 18px;
+}
+.footer{
+    height: 90px;
+    background-color: #d4af37;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+.footer p{
+    font-size: 23px;
+    font-weight: 500;
+}
+.footer .fa{
+    font-size: 28px;
+}
+a{
+    text-decoration: none;
+    color: black;
+}
+
+@media(max-width:576px){
+    .name-section h2{
+        font-size: 30px;
+    }
+    .name-section .title{
+        font-size: 25px;
+    }
+    .container{
+        width: 100%;
+    }
+    .social-icons{
+        gap: 1rem;
+    }
+    .icon{
+        width: 40px;
+        height: 40px;
+        display: grid;
+        align-items: center;
+        justify-content: center;
+    }
+    .fa{
+        font-size: 22px !important;
+    }
+    .icon img{
+        width: 20px;
+    }
+  
+
+    .head-banner{
+      height: 220px;
+    }
+    .profile-pic{
+        width: 135px !important;
+        height: 135px !important;
+    }
+    .button-item{
+        width: 150px !important;
+        height: 38px !important;
+    }
+    .name-section{
+        padding: 10px !important;
+      
+    }
+    .name-section h2{
+        padding-top: 4rem !important;
+    }
+    .footer{
+        height: 80px !important;
+    }
+    .position{
+        margin-top: 6px !important;
+        font-size: 12px !important;
+    }
+    .title{
+        margin-top: 6px !important;
+        font-size: 14px !important;
+    }
+    a{
+        font-size: 12px !important;
+    }
+    .websiteLink{
+        font-size: 12px !important;
+    }
+    .about p{
+        font-size: 13px !important;
+    }
+}
