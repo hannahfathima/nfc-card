@@ -470,159 +470,169 @@
                 if (doc.exists) {
                     const data = doc.data();
 
-                    // const expiryDate = data.expiryDate?.toDate(); // Convert Firestore timestamp to Date
-                    // if (expiryDate && expiryDate < new Date()) {
-                    //     document.getElementById('container').innerHTML = `
-                    //         <div class="expired-message" style="text-align: center; padding: 2rem;">
-                    //             <h2>This card has expired</h2>
-                    //             <p>Please contact the administrator for renewal.</p>
-                    //         </div>
-                    //     `;
-                    //     return;
-                    // }
-                    console.log(data);
+                    // Check profile status and expiry
+                    const expiryDate = data.expiryDate ? data.expiryDate.toDate() : null;
+                    const currentDate = new Date();
+                    const isExpired = expiryDate && expiryDate < currentDate;
 
-                    if (!urlParams.has('id')) {
-                        const newUrl = `${window.location.pathname}?id=${userId}`;
-                        window.history.pushState({ path: newUrl }, '', newUrl);
-                    }
-                    const startColor = hexToRgba(data.buttonColor, 0.8);
-                    const endColor = hexToRgba(data.buttonColor, 5);
+                    // Profile is visible only if status is 0 AND not expired
+                    if (data.status === 0 && !isExpired) {
 
-                    const html = `
-                      <div class="head-banner" style="background-image: url('${data.bgImage}'); border-bottom: 4px solid #${data.buttonColor};">
-    <div class="profile-pic" style='border:4px solid #${data.buttonColor}'>
-        <img src="${data.pImage}" id="profile-pic" alt="Profile Picture">
+                        console.log(data);
+
+                        if (!urlParams.has('id')) {
+                            const newUrl = `${window.location.pathname}?id=${userId}`;
+                            window.history.pushState({ path: newUrl }, '', newUrl);
+                        }
+                        const startColor = hexToRgba(data.buttonColor, 0.8);
+                        const endColor = hexToRgba(data.buttonColor, 5);
+
+                        const html = `
+                          <div class="head-banner" style="background-image: url('${data.bgImage}'); border-bottom: 4px solid #${data.buttonColor};">
+        <div class="profile-pic" style='border:4px solid #${data.buttonColor}'>
+            <img src="${data.pImage}" id="profile-pic" alt="Profile Picture">
+        </div>
+    
     </div>
-
-</div>
-                                                </div>
-                        <div style='background-color:#${data.cardColor}'>
-                            <div class="name-section">
-                                <h2 style='color:#${data.textColor}'>${data.uName} ${data.lName}</h2>
-                                <p class="position">${data.designation}</p>
-                                <p class="title">${data.comName}</p>
-                      <div class="social-icons">
-                        ${data.insta ? `<a href="${data.insta}">
-                            <div class="icon" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
-                                <i class="fa fa-instagram" style='color:#${data.buttonTextColor} !important' aria-hidden="true"></i>
-                            </div>
-                        </a>` : ''}
-                        
-                        ${data.whatsapp ? `<a href="https://wa.me/${data.wCountryCode}${data.whatsapp}">
-                            <div class="icon" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
-                                <i class="fa fa-whatsapp" aria-hidden="true" style='color:#${data.buttonTextColor} !important'></i>
-                            </div>
-                        </a>` : ''}
-                        
-                        ${data.mail ? `<a href="mailto:${data.mail}">
-                            <div class="icon" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
-                                <i class="fa fa-envelope" style='color:#${data.buttonTextColor} !important' aria-hidden="true"></i>
-                            </div>
-                        </a>` : ''}
-                        
-                        ${data.linkdin ? `<a href="${data.linkdin}">
-                            <div class="icon" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
-                                <i class="fa fa-linkedin" style='color:#${data.buttonTextColor} !important' aria-hidden="true"></i>
-                            </div>
-                        </a>` : ''}
-                        
-                        ${data.facebook ? `<a href="${data.facebook}">
-                            <div class="icon" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
-                                <i class="fa fa-facebook-square" style='color:#${data.buttonTextColor} !important' aria-hidden="true"></i>
-                            </div>
-                        </a>` : ''}
-                        
-                        ${data.call ? `<a href='tel:${data.cCountryCode}${data.call}'>
-                   <div class="icon" style="background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%)">
-                                <i class="fa fa-phone" style='color:#${data.buttonTextColor} !important' aria-hidden="true"></i>
-                            </div>
-                        </a>` : ''}
-                      </div>
-
-                                <div class="buttons-wrapper">
-                                    <div class="button-item" id="add-to-contact" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
-                                        <svg class='button-svg' id="Layer_1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" fill="#${data.buttonTextColor}" style="width: 1.2rem;">
-                                            <path d="m12 11.75c2.62 0 4.75-2.13 4.75-4.75s-2.13-4.75-4.75-4.75-4.75 2.13-4.75 4.75 2.13 4.75 4.75 4.75zm0-8c1.79 0 3.25 1.46 3.25 3.25s-1.46 3.25-3.25 3.25-3.25-1.46-3.25-3.25 1.46-3.25 3.25-3.25z" fill="#${data.buttonTextColor};"/><path d="m13.97 20.25h-7.97c-.69 0-1.25-.56-1.25-1.25 0-2.34 1.91-4.25 4.25-4.25h5c.41 0 .75-.34.75-.75s-.34-.75-.75-.75h-5c-3.17 0-5.75 2.58-5.75 5.75 0 1.52 1.23 2.75 2.75 2.75h7.97c.41 0 .75-.34.75-.75s-.34-.75-.75-.75z" fill="#${data.buttonTextColor};"/><path d="m21 17.25h-2.25v-2.25c0-.41-.34-.75-.75-.75s-.75.34-.75.75v2.25h-2.25c-.41 0-.75.34-.75.75s.34.75.75.75h2.25v2.25c0 .41.34.75.75.75s.75-.34.75-.75v-2.25h2.25c.41 0 .75-.34.75-.75s-.34-.75-.75-.75z" fill="#${data.buttonTextColor};"/>
-                                        </svg>
-                                        <a href='#' style='color:#${data.buttonTextColor}'>Add to Contact</a>
-                                    </div>
-                                    <div class="button-item" id="share-contact" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
-                                   <svg class='button-svg' id="Glyph" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="#${data.buttonTextColor}" style="width: 1.2rem;"><path d="m42.855 17.18528c4.52758 7.0257 15.64578 3.83576 15.67334-4.64611a8.54292 8.54292 0 0 0 -8.53734-8.53717c-6.6301-.14491-10.8839 7.76132-7.136 13.18328z"/><path d="m49.991 42.99143a8.55033 8.55033 0 0 0 -8.52656 8.52657c.42692 11.316 16.64088 11.30264 17.06391-.00013a8.54072 8.54072 0 0 0 -8.53735-8.52644z"/><path d="m22.56791 40.87862c-.0241.01793 16.75536 10.04827 16.75131 10.05732a10.13123 10.13123 0 0 1 .38813-2.29606l-16.02912-9.60451a10.595 10.595 0 0 1 -1.11032 1.84325z"/><path d="m21.25284 29.99134c-4.476-7.18887-15.73392-4.08763-15.78119 4.49519a8.543 8.543 0 0 0 8.53735 8.53727c6.57534.15729 10.78313-7.65055 7.24384-13.03246z"/><path d="m41.62607 19.16874a10.58889 10.58889 0 0 1 -1.1642-1.81095l-17.894 10.73635a11.41885 11.41885 0 0 1 1.09952 1.84333z"/></svg>
-                                        <a href='#' style='color:#${data.buttonTextColor}'>Share Contact</a>
-                                    </div>
-                                    ${data.website ? `
-                                    <a href="${data.website.startsWith('www.') ? 'https://' + data.website : data.website}" target="_blank" rel="noopener noreferrer">
-                                        <div class="button-item" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);margin-top: 1rem;'>
-                                             <svg class='button-svg' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"  fill="#${data.buttonTextColor}" style="width: 1.2rem;height:1.2rem;"><g id="Layer_3" data-name="Layer 3"><path d="M16,1A15,15,0,1,0,31,16,15.017,15.017,0,0,0,16,1Zm0,28c-2.065,0-4.227-2.662-5.3-7H21.3C20.227,26.338,18.065,29,16,29Zm-5.706-9a27.358,27.358,0,0,1,0-8H21.706A26.651,26.651,0,0,1,22,16a26.651,26.651,0,0,1-.294,4ZM3,16a12.94,12.94,0,0,1,.636-4h4.65a28.115,28.115,0,0,0,0,8H3.636A12.94,12.94,0,0,1,3,16ZM16,3c2.065,0,4.227,2.662,5.3,7H10.7C11.773,5.662,13.935,3,16,3Zm7.714,9h4.65a12.9,12.9,0,0,1,0,8h-4.65A28.351,28.351,0,0,0,24,16,28.351,28.351,0,0,0,23.714,12Zm3.807-2H23.354a16.766,16.766,0,0,0-2.567-6.075A13.063,13.063,0,0,1,27.521,10ZM11.213,3.925A16.766,16.766,0,0,0,8.646,10H4.479A13.063,13.063,0,0,1,11.213,3.925ZM4.479,22H8.646a16.766,16.766,0,0,0,2.567,6.075A13.063,13.063,0,0,1,4.479,22Zm16.308,6.075A16.766,16.766,0,0,0,23.354,22h4.167A13.063,13.063,0,0,1,20.787,28.075Z"/></g></svg>
-                                            <span class='websiteLink' style='color:#${data.buttonTextColor}'>Website</span>
-                                        </div>
-                                    </a>` : ''}
+                                                    </div>
+                            <div style='background-color:#${data.cardColor}'>
+                                <div class="name-section">
+                                    <h2 style='color:#${data.textColor}'>${data.uName} ${data.lName}</h2>
+                                    <p class="position">${data.designation}</p>
+                                    <p class="title">${data.comName}</p>
+                          <div class="social-icons">
+                            ${data.insta ? `<a href="${data.insta}">
+                                <div class="icon" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
+                                    <i class="fa fa-instagram" style='color:#${data.buttonTextColor} !important' aria-hidden="true"></i>
                                 </div>
-                            </div>
-                            ${data.about ? `
-                            <div class="about">
-                                <h3 style='color:#${data.textColor}'>About</h3>
-                                <p>${data.about}</p>
-                                <p>
-                                    <i id="fa-contactss" class="fa fa-phone" style="color:#${data.textColor} !important; font-size:14px !important; margin-right:14px; margin-top:10px;" aria-hidden="true"></i>
-                                    ${data.cCountryCode} ${data.call}
-                                </p>
-                                <p>
-                                      <i class="fa fa-envelope"  style="color:#${data.textColor} !important; font-size:14px !important; margin-right:14px; margin-top:0px;" aria-hidden="true"></i>
-                              ${data.mail}
-                                </p>
-                                <p>
-                                   <i class="fa fa-whatsapp" aria-hidden="true"style="color:#${data.textColor} !important; font-size:14px !important; margin-right:14px; margin-top:0px;" aria-hidden="true"></i>
-                                ${data.wCountryCode} ${data.whatsapp}
-                                </p>
-
-
-                            </div>` : ''}
-                     
-                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((data.address || '') + ' ' + (data.city || '') + ' ' + (data.state || ''))}" target="_blank">
-                            <div class = "footer" style = 'background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);' >
-                                ${(data.address || data.city) ? `
-                                    <svg class='location-svg' version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                        viewBox="0 0 512 512" xml:space="preserve" fill="#${data.buttonTextColor}" style="width: 1.2rem;">
-                                            <path d="M256,0C153.755,0,70.573,83.182,70.573,185.426c0,126.888,165.939,313.167,173.004,321.035
-                                                c6.636,7.391,18.222,7.378,24.846,0c7.065-7.868,173.004-194.147,173.004-321.035C441.425,83.182,358.244,0,256,0z M256,278.719
-                                                c-51.442,0-93.292-41.851-93.292-93.293S204.559,92.134,256,92.134s93.291,41.851,93.291,93.293S307.441,278.719,256,278.719z"/>
-                                    </svg>
-                                    <p style='color:#${data.buttonTextColor}'>
-                                        ${data.city}, ${data.state}
+                            </a>` : ''}
+                            
+                            ${data.whatsapp ? `<a href="https://wa.me/${data.wCountryCode}${data.whatsapp}">
+                                <div class="icon" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
+                                    <i class="fa fa-whatsapp" aria-hidden="true" style='color:#${data.buttonTextColor} !important'></i>
+                                </div>
+                            </a>` : ''}
+                            
+                            ${data.mail ? `<a href="mailto:${data.mail}">
+                                <div class="icon" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
+                                    <i class="fa fa-envelope" style='color:#${data.buttonTextColor} !important' aria-hidden="true"></i>
+                                </div>
+                            </a>` : ''}
+                            
+                            ${data.linkdin ? `<a href="${data.linkdin}">
+                                <div class="icon" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
+                                    <i class="fa fa-linkedin" style='color:#${data.buttonTextColor} !important' aria-hidden="true"></i>
+                                </div>
+                            </a>` : ''}
+                            
+                            ${data.facebook ? `<a href="${data.facebook}">
+                                <div class="icon" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
+                                    <i class="fa fa-facebook-square" style='color:#${data.buttonTextColor} !important' aria-hidden="true"></i>
+                                </div>
+                            </a>` : ''}
+                            
+                            ${data.call ? `<a href='tel:${data.cCountryCode}${data.call}'>
+                       <div class="icon" style="background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%)">
+                                    <i class="fa fa-phone" style='color:#${data.buttonTextColor} !important' aria-hidden="true"></i>
+                                </div>
+                            </a>` : ''}
+                          </div>
+    
+                                    <div class="buttons-wrapper">
+                                        <div class="button-item" id="add-to-contact" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
+                                            <svg class='button-svg' id="Layer_1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" fill="#${data.buttonTextColor}" style="width: 1.2rem;">
+                                                <path d="m12 11.75c2.62 0 4.75-2.13 4.75-4.75s-2.13-4.75-4.75-4.75-4.75 2.13-4.75 4.75 2.13 4.75 4.75 4.75zm0-8c1.79 0 3.25 1.46 3.25 3.25s-1.46 3.25-3.25 3.25-3.25-1.46-3.25-3.25 1.46-3.25 3.25-3.25z" fill="#${data.buttonTextColor};"/><path d="m13.97 20.25h-7.97c-.69 0-1.25-.56-1.25-1.25 0-2.34 1.91-4.25 4.25-4.25h5c.41 0 .75-.34.75-.75s-.34-.75-.75-.75h-5c-3.17 0-5.75 2.58-5.75 5.75 0 1.52 1.23 2.75 2.75 2.75h7.97c.41 0 .75-.34.75-.75s-.34-.75-.75-.75z" fill="#${data.buttonTextColor};"/><path d="m21 17.25h-2.25v-2.25c0-.41-.34-.75-.75-.75s-.75.34-.75.75v2.25h-2.25c-.41 0-.75.34-.75.75s.34.75.75.75h2.25v2.25c0 .41.34.75.75.75s.75-.34.75-.75v-2.25h2.25c.41 0 .75-.34.75-.75s-.34-.75-.75-.75z" fill="#${data.buttonTextColor};"/>
+                                            </svg>
+                                            <a href='#' style='color:#${data.buttonTextColor}'>Add to Contact</a>
+                                        </div>
+                                        <div class="button-item" id="share-contact" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);'>
+                                       <svg class='button-svg' id="Glyph" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="#${data.buttonTextColor}" style="width: 1.2rem;"><path d="m42.855 17.18528c4.52758 7.0257 15.64578 3.83576 15.67334-4.64611a8.54292 8.54292 0 0 0 -8.53734-8.53717c-6.6301-.14491-10.8839 7.76132-7.136 13.18328z"/><path d="m49.991 42.99143a8.55033 8.55033 0 0 0 -8.52656 8.52657c.42692 11.316 16.64088 11.30264 17.06391-.00013a8.54072 8.54072 0 0 0 -8.53735-8.52644z"/><path d="m22.56791 40.87862c-.0241.01793 16.75536 10.04827 16.75131 10.05732a10.13123 10.13123 0 0 1 .38813-2.29606l-16.02912-9.60451a10.595 10.595 0 0 1 -1.11032 1.84325z"/><path d="m21.25284 29.99134c-4.476-7.18887-15.73392-4.08763-15.78119 4.49519a8.543 8.543 0 0 0 8.53735 8.53727c6.57534.15729 10.78313-7.65055 7.24384-13.03246z"/><path d="m41.62607 19.16874a10.58889 10.58889 0 0 1 -1.1642-1.81095l-17.894 10.73635a11.41885 11.41885 0 0 1 1.09952 1.84333z"/></svg>
+                                            <a href='#' style='color:#${data.buttonTextColor}'>Share Contact</a>
+                                        </div>
+                                        ${data.website ? `
+                                        <a href="${data.website.startsWith('www.') ? 'https://' + data.website : data.website}" target="_blank" rel="noopener noreferrer">
+                                            <div class="button-item" style='background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);margin-top: 1rem;'>
+                                                 <svg class='button-svg' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"  fill="#${data.buttonTextColor}" style="width: 1.2rem;height:1.2rem;"><g id="Layer_3" data-name="Layer 3"><path d="M16,1A15,15,0,1,0,31,16,15.017,15.017,0,0,0,16,1Zm0,28c-2.065,0-4.227-2.662-5.3-7H21.3C20.227,26.338,18.065,29,16,29Zm-5.706-9a27.358,27.358,0,0,1,0-8H21.706A26.651,26.651,0,0,1,22,16a26.651,26.651,0,0,1-.294,4ZM3,16a12.94,12.94,0,0,1,.636-4h4.65a28.115,28.115,0,0,0,0,8H3.636A12.94,12.94,0,0,1,3,16ZM16,3c2.065,0,4.227,2.662,5.3,7H10.7C11.773,5.662,13.935,3,16,3Zm7.714,9h4.65a12.9,12.9,0,0,1,0,8h-4.65A28.351,28.351,0,0,0,24,16,28.351,28.351,0,0,0,23.714,12Zm3.807-2H23.354a16.766,16.766,0,0,0-2.567-6.075A13.063,13.063,0,0,1,27.521,10ZM11.213,3.925A16.766,16.766,0,0,0,8.646,10H4.479A13.063,13.063,0,0,1,11.213,3.925ZM4.479,22H8.646a16.766,16.766,0,0,0,2.567,6.075A13.063,13.063,0,0,1,4.479,22Zm16.308,6.075A16.766,16.766,0,0,0,23.354,22h4.167A13.063,13.063,0,0,1,20.787,28.075Z"/></g></svg>
+                                                <span class='websiteLink' style='color:#${data.buttonTextColor}'>Website</span>
+                                            </div>
+                                        </a>` : ''}
+                                    </div>
+                                </div>
+                                ${data.about ? `
+                                <div class="about">
+                                    <h3 style='color:#${data.textColor}'>About</h3>
+                                    <p>${data.about}</p>
+                                    <p>
+                                        <i id="fa-contactss" class="fa fa-phone" style="color:#${data.textColor} !important; font-size:14px !important; margin-right:14px; margin-top:10px;" aria-hidden="true"></i>
+                                        ${data.cCountryCode} ${data.call}
                                     </p>
-                                    ` : ''
-                        }
-                                </div >
-                            </a >
-                        </div >
-            `;
+                                    <p>
+                                          <i class="fa fa-envelope"  style="color:#${data.textColor} !important; font-size:14px !important; margin-right:14px; margin-top:0px;" aria-hidden="true"></i>
+                                  ${data.mail}
+                                    </p>
+                                    <p>
+                                       <i class="fa fa-whatsapp" aria-hidden="true"style="color:#${data.textColor} !important; font-size:14px !important; margin-right:14px; margin-top:0px;" aria-hidden="true"></i>
+                                    ${data.wCountryCode} ${data.whatsapp}
+                                    </p>
+    
+    
+                                </div>` : ''}
+                         
+                                <a href="${(data.lat && data.long && data.lat != '0.0' && data.long != '0.0' && data.lat != '0' && data.long != '0') ? `https://www.google.com/maps/search/?api=1&query=${data.lat},${data.long}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((data.address || '') + ' ' + (data.city || '') + ' ' + (data.state || ''))}`}" target="_blank">
+                                <div class = "footer" style = 'background: linear-gradient(90deg, ${startColor} 0%, ${endColor} 100%);' >
+                                    ${(data.address || data.city) ? `
+                                        <svg class='location-svg' version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                            viewBox="0 0 512 512" xml:space="preserve" fill="#${data.buttonTextColor}" style="width: 1.2rem;">
+                                                <path d="M256,0C153.755,0,70.573,83.182,70.573,185.426c0,126.888,165.939,313.167,173.004,321.035
+                                                    c6.636,7.391,18.222,7.378,24.846,0c7.065-7.868,173.004-194.147,173.004-321.035C441.425,83.182,358.244,0,256,0z M256,278.719
+                                                    c-51.442,0-93.292-41.851-93.292-93.293S204.559,92.134,256,92.134s93.291,41.851,93.291,93.293S307.441,278.719,256,278.719z"/>
+                                        </svg>
+                                        <p style='color:#${data.buttonTextColor}'>
+                                            ${data.city}, ${data.state}
+                                        </p>
+                                        ` : ''
+                            }
+                                    </div >
+                                </a >
+                            </div >
+                `;
 
-                    document.getElementById('container').innerHTML = html;
+                        document.getElementById('container').innerHTML = html;
 
-                    // Add VCF creation functionality
-                    document.getElementById('add-to-contact').addEventListener('click', function (event) {
-                        event.preventDefault();
-                        createAndDownloadVCF(data);
-                    });
+                        // Add VCF creation functionality
+                        document.getElementById('add-to-contact').addEventListener('click', function (event) {
+                            event.preventDefault();
+                            createAndDownloadVCF(data);
+                        });
 
-                    // Add Share Contact functionality
-                    document.getElementById('share-contact').addEventListener('click', function (event) {
-                        event.preventDefault();
+                        // Add Share Contact functionality
+                        document.getElementById('share-contact').addEventListener('click', function (event) {
+                            event.preventDefault();
 
-                        if (navigator.share) {
-                            navigator.share({
-                                title: `${data.uName} ${data.lName} - Contact Information`,
-                                text: `Contact ${data.uName} ${data.lName} at ${data.cCountryCode}${data.call} or email ${data.mail}.`,
-                                url: window.location.href
-                            })
-                                .then(() => console.log('Contact shared successfully'))
-                                .catch((error) => console.log('Error sharing contact:', error));
-                        } else {
-                            alert('Share functionality is not supported on this device.');
-                        }
-                    });
+                            if (navigator.share) {
+                                navigator.share({
+                                    title: `${data.uName} ${data.lName} - Contact Information`,
+                                    text: `Contact ${data.uName} ${data.lName} at ${data.cCountryCode}${data.call} or email ${data.mail}.`,
+                                    url: window.location.href
+                                })
+                                    .then(() => console.log('Contact shared successfully'))
+                                    .catch((error) => console.log('Error sharing contact:', error));
+                            } else {
+                                alert('Share functionality is not supported on this device.');
+                            }
+                        });
+
+
+                    } else {
+                        // Profile not found or expired
+                        document.getElementById('container').innerHTML = `
+                             <div class="expired-message" style="text-align: center; padding: 5rem 2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+                                <i class="fa fa-exclamation-circle" style="font-size: 50px; color: #d4af37; margin-bottom: 20px;"></i>
+                                <h2 style="color: #333; margin-bottom: 10px;">Profile Not Found</h2>
+                                <p style="color: #666; font-size: 18px;">The profile you are looking for is unavailable or has expired.</p>
+                            </div>
+                        `;
+                    }
                 } else {
                     console.log('No such document!');
                 }
@@ -643,22 +653,22 @@
 
         // Function to create and download VCF
         async function createAndDownloadVCF(data) {
-            let vCard = `BEGIN: VCARD
-        VERSION: 3.0
-Full Name:${data.uName} ${data.lName}
-        N:${data.lName};${data.uName};;;
-        Company:${data.comName}
-        Position:${data.designation}
-        Tel; TYPE = WORK, VOICE:${data.cCountryCode}${data.call || ''}
-        Email; TYPE = WORK:${data.mail || ''}
-        Website:${data.website || ''}
-        Address: ;;${data.address || ''};${data.city || ''};${data.state || ''};;
-        About:${data.about || ''}
-        `;
+            let vCard = `BEGIN:VCARD
+VERSION:3.0
+FN:${data.uName} ${data.lName}
+N:${data.lName};${data.uName};;;
+ORG:${data.comName}
+TITLE:${data.designation}
+TEL;TYPE=WORK,VOICE:${data.cCountryCode}${data.call || ''}
+EMAIL;TYPE=WORK:${data.mail || ''}
+URL:${data.website || ''}
+ADR;TYPE=WORK:;;${data.address || ''};${data.city || ''};${data.state || ''};;${data.cCountry || ''}
+NOTE:${data.about || ''}
+`;
 
-            // Add social media URLs
-            if (data.insta) vCard += `URL; TYPE = Instagram:${data.insta} \n`;
-            if (data.whatsapp) vCard += `URL; TYPE = WhatsApp: https://wa.me/${data.wCountryCode}${data.whatsapp}\n`;
+            // Add social media URLs as NOTE references or separate URLs (vCard 3.0 supports multiple URLs)
+            if (data.insta) vCard += `URL;TYPE=Instagram:${data.insta}\n`;
+            if (data.whatsapp) vCard += `URL;TYPE=WhatsApp:https://wa.me/${data.wCountryCode}${data.whatsapp}\n`;
             if (data.linkdin) vCard += `URL;TYPE=LinkedIn:${data.linkdin}\n`;
             if (data.facebook) vCard += `URL;TYPE=Facebook:${data.facebook}\n`;
 
@@ -666,6 +676,9 @@ Full Name:${data.uName} ${data.lName}
             if (data.pImage) {
                 try {
                     const base64data = await fetchImageAsBase64(data.pImage);
+                    // Remove line breaks from base64 string if any, though usually split(',') [1] is clean.
+                    // vCard 3.0 PHOTO requires folding if lines are too long, but many parsers accept one long line.
+                    // However, we'll keep it simple.
                     vCard += `PHOTO;ENCODING=b;TYPE=JPEG:${base64data}\n`;
                 } catch (error) {
                     console.error('Error fetching image:', error);
